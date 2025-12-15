@@ -12,3 +12,18 @@ declare module "@mui/material/styles" {
     };
   }
 }
+
+declare module "@mui/material/styles" {
+  interface Palette {
+    accent: {
+      lime: string;
+      purple: string;
+    };
+  }
+  interface PaletteOptions {
+    accent?: {
+      lime: string;
+      purple: string;
+    };
+  }
+}
