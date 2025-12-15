@@ -5,5 +5,5 @@ export type AuthIdentifierStepProps = {
   onSubmit?: () => void;
   onForgotPassword?: () => void;
   onSwitchAuthMode?: () => void;
-  errorMessage?: string;
+  // errorMessage?: string;
 };

@@ -24,149 +24,144 @@ const AuthIdentifierStep = ({
   onSubmit,
   onForgotPassword,
   onSwitchAuthMode,
-  errorMessage,
 }: AuthIdentifierStepProps) => {
   return (
-    <Container maxWidth="sm">
-      <Box
-        minHeight="100vh"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        px={2}
+    <Box
+      minHeight="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      px={2}
+    >
+      <Paper
+        elevation={0}
+        sx={{ width: "100%", maxWidth: 400, borderRadius: 4, p: 3 }}
       >
-        <Paper
-          elevation={0}
-          sx={{ width: "100%", maxWidth: 400, borderRadius: 4, p: 3 }}
-        >
-          <Stack spacing={3}>
-            {/*Logo */}
-            <Box display="flex" justifyContent="center">
-              <Box
-                sx={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 3,
-                  bgcolor: "secondary.light",
-                  color: "#fff",
-                  fontWeight: 700,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 28,
-                }}
-              >
-                U
-              </Box>
-            </Box>
-
-            <Stack spacing={1} textAlign="center">
-              <Typography variant="h5" fontWeight={700}>
-                {title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {subtitle}
-              </Typography>
-            </Stack>
-            <Stack spacing={1}>
-              <Typography variant="body2" fontWeight={600}>
-                Email Address
-              </Typography>
-              <TextField
-                placeholder="Enter your email"
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <EmailOutlinedIcon
-                      sx={{ mr: 1, color: "text.secondary" }}
-                    />
-                  ),
-                }}
-              />
-            </Stack>
-            {/* Password */}
-            <Stack spacing={1}>
-              <Typography variant="body2" fontWeight={600}>
-                Password
-              </Typography>
-              <TextField
-                placeholder="Enter password"
-                type="password"
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <LockOutlinedIcon sx={{ mr: 1, color: "text.secondary" }} />
-                  ),
-                  endAdornment: (
-                    <IconButton size="small">
-                      <VisibilityOutlinedIcon />
-                    </IconButton>
-                  ),
-                }}
-              />
-            </Stack>
-
-            {/* Primary CTA */}
-            <Button
-              fullWidth
-              size="large"
-              variant="contained"
-              onClick={onSubmit}
+        <Stack spacing={3}>
+          {/*Logo */}
+          <Box display="flex" justifyContent="center">
+            <Box
               sx={{
-                height: 52,
+                width: 64,
+                height: 64,
                 borderRadius: 3,
-                bgcolor: "text.primary",
-                "&:hover": { bgcolor: "text.primary" },
+                bgcolor: "secondary.light",
+                color: "#fff",
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 28,
               }}
             >
-              {primaryActionLabel}
-            </Button>
+              U
+            </Box>
+          </Box>
 
-            {/* Social Login */}
-            <Stack spacing={2}>
-              <Divider>or</Divider>
-              <Stack direction="row" spacing={2} justifyContent="center">
-                <IconButton>
-                  <InstagramIcon />
-                </IconButton>
-                <IconButton>
-                  <FacebookIcon />
-                </IconButton>
-                <IconButton>
-                  <LinkedInIcon />
-                </IconButton>
-              </Stack>
+          <Stack spacing={1} textAlign="center">
+            <Typography variant="h5" fontWeight={700}>
+              {title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {subtitle}
+            </Typography>
+          </Stack>
+          <Stack spacing={1}>
+            <Typography variant="body2" fontWeight={600}>
+              Email Address
+            </Typography>
+            <TextField
+              placeholder="Enter your email"
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <EmailOutlinedIcon sx={{ mr: 1, color: "text.secondary" }} />
+                ),
+              }}
+            />
+          </Stack>
+          {/* Password */}
+          <Stack spacing={1}>
+            <Typography variant="body2" fontWeight={600}>
+              Password
+            </Typography>
+            <TextField
+              placeholder="Enter password"
+              type="password"
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <LockOutlinedIcon sx={{ mr: 1, color: "text.secondary" }} />
+                ),
+                endAdornment: (
+                  <IconButton size="small">
+                    <VisibilityOutlinedIcon />
+                  </IconButton>
+                ),
+              }}
+            />
+          </Stack>
+
+          {/* Primary CTA */}
+          <Button
+            fullWidth
+            size="large"
+            variant="contained"
+            onClick={onSubmit}
+            sx={{
+              height: 52,
+              borderRadius: 3,
+              bgcolor: "text.primary",
+              "&:hover": { bgcolor: "text.primary" },
+            }}
+          >
+            {primaryActionLabel}
+          </Button>
+
+          {/* Social Login */}
+          <Stack spacing={2}>
+            <Divider>or</Divider>
+            <Stack direction="row" spacing={2} justifyContent="center">
+              <IconButton>
+                <InstagramIcon />
+              </IconButton>
+              <IconButton>
+                <FacebookIcon />
+              </IconButton>
+              <IconButton>
+                <LinkedInIcon />
+              </IconButton>
             </Stack>
+          </Stack>
 
-            {/* Footer Links */}
-            <Stack spacing={1} textAlign="center">
-              <Typography variant="body2">
-                Don’t have an account?{" "}
-                <Typography
-                  component="span"
-                  color="primary.main"
-                  fontWeight={600}
-                  sx={{ cursor: "pointer" }}
-                  onClick={onSwitchAuthMode}
-                >
-                  Sign Up
-                </Typography>
-              </Typography>
-
+          {/* Footer Links */}
+          <Stack spacing={1} textAlign="center">
+            <Typography variant="body2">
+              Don’t have an account?{" "}
               <Typography
-                variant="body2"
+                component="span"
                 color="primary.main"
                 fontWeight={600}
                 sx={{ cursor: "pointer" }}
-                onClick={onForgotPassword}
+                onClick={onSwitchAuthMode}
               >
-                Forgot Password
+                Sign Up
               </Typography>
-            </Stack>
+            </Typography>
+
+            <Typography
+              variant="body2"
+              color="primary.main"
+              fontWeight={600}
+              sx={{ cursor: "pointer" }}
+              onClick={onForgotPassword}
+            >
+              Forgot Password
+            </Typography>
           </Stack>
-        </Paper>
-      </Box>
-    </Container>
+        </Stack>
+      </Paper>
+    </Box>
   );
 };
 
