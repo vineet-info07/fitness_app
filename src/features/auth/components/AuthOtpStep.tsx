@@ -1,148 +1,178 @@
 import {
   Box,
   Button,
-  IconButton,
   Paper,
   Stack,
   TextField,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-
+import { useTheme, useMediaQuery } from "@mui/material";
+import { useRef, useState } from "react";
 import type { AuthOtpStepProps } from "../types/auth.types";
 
 const OTP_LENGTH = 6;
 
 const AuthOtpStep = ({
-  title = "Enter Verification Code",
-  subtitle = "We’ve sent a 6-digit code to your email",
+  title = "Verify your account",
+  subtitle = "We’ve sent a 6-digit code to",
+  identifier,
   primaryActionLabel = "Verify",
-  maskedIdentifier = "el*****@gmail.com",
   onSubmit,
-  onBack,
-  onResend,
+  isLoading = false,
+  errorMessage,
 }: AuthOtpStepProps) => {
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
+  const isTabletUp = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
+  const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+
+  // 👉 Move focus
+  const focusInput = (index: number) => {
+    inputsRef.current[index]?.focus();
+  };
+
+  // 👉 Handle typing
+  const handleChange = (value: string, index: number) => {
+    if (!/^\d?$/.test(value)) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    if (value && index < OTP_LENGTH - 1) {
+      focusInput(index + 1);
+    }
+  };
+
+  // 👉 Handle backspace
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      focusInput(index - 1);
+    }
+  };
+
+  // 👉 Handle paste
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData("text").slice(0, OTP_LENGTH);
+    if (!/^\d+$/.test(pasted)) return;
+
+    const pastedOtp = pasted.split("");
+    setOtp(pastedOtp);
+
+    focusInput(pastedOtp.length - 1);
+    e.preventDefault();
+  };
+
+  const combinedOtp = otp.join("");
+  const isComplete = combinedOtp.length === OTP_LENGTH;
 
   return (
-    <Box minHeight="100vh" display="flex">
-      {/* Desktop Branding */}
-      {isDesktop && (
-        <Box
-          flex={1}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          px={8}
-          sx={{ bgcolor: "background.default" }}
-        >
-          <Stack spacing={3} maxWidth={420}>
-            <Typography variant="h3" fontWeight={800}>
-              Verify your identity
-            </Typography>
-
-            <Typography color="text.secondary" fontSize={16}>
-              This extra step helps us keep your account secure.
-            </Typography>
-          </Stack>
-        </Box>
-      )}
-
-      {/* OTP Card */}
-      <Box
-        flex={1}
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        px={{ xs: 2, sm: 0 }}
+    <Box
+      minHeight="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      px={2}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          width: "100%",
+          maxWidth: isTabletUp ? 420 : 360,
+          borderRadius: 4,
+          p: isTabletUp ? 4 : 3,
+        }}
       >
-        <Paper
-          elevation={0}
-          sx={{
-            width: "100%",
-            maxWidth: { xs: "100%", sm: 420, md: 460 },
-            borderRadius: { xs: 0, sm: 4 },
-            p: { xs: 2.5, sm: 3.5, md: 4 },
-          }}
-        >
-          <Stack spacing={{ xs: 2.5, sm: 3 }}>
-            {/* Back */}
-            <IconButton onClick={onBack} sx={{ alignSelf: "flex-start" }}>
-              <ArrowBackIosNewIcon fontSize="small" />
-            </IconButton>
+        <Stack spacing={4} alignItems="center">
+          {/* Visual */}
+          <Box
+            sx={{
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              bgcolor: "secondary.light",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 32,
+            }}
+          >
+            🔐
+          </Box>
 
-            {/* Header */}
-            <Stack spacing={1}>
-              <Typography variant={isDesktop ? "h4" : "h5"} fontWeight={700}>
-                {title}
-              </Typography>
-
-              <Typography variant="body2" color="text.secondary">
-                {subtitle}
-                <br />
-                <strong>{maskedIdentifier}</strong>
-              </Typography>
-            </Stack>
-
-            {/* OTP Inputs */}
-            <Stack
-              direction="row"
-              spacing={{ xs: 1, sm: 1.5 }}
-              justifyContent="center"
-            >
-              {Array.from({ length: OTP_LENGTH }).map((_, index) => (
-                <TextField
-                  key={index}
-                  inputProps={{
-                    maxLength: 1,
-                    style: { textAlign: "center", fontSize: 18 },
-                  }}
-                  sx={{
-                    width: { xs: 44, sm: 52 },
-                  }}
-                />
-              ))}
-            </Stack>
-
-            {/* Timer */}
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              textAlign="center"
-            >
-              Didn’t receive the code?{" "}
-              <Typography
-                component="span"
-                color="primary.main"
-                fontWeight={600}
-                sx={{ cursor: "pointer" }}
-                onClick={onResend}
-              >
-                Resend
-              </Typography>
+          {/* Header */}
+          <Stack spacing={1} textAlign="center">
+            <Typography variant={isTabletUp ? "h5" : "h6"} fontWeight={700}>
+              {title}
             </Typography>
-
-            {/* CTA */}
-            <Button
-              fullWidth
-              size="large"
-              variant="contained"
-              onClick={onSubmit}
-              sx={{
-                height: { xs: 48, sm: 52 },
-                borderRadius: 3,
-                bgcolor: "text.primary",
-                "&:hover": { bgcolor: "text.primary" },
-              }}
-            >
-              {primaryActionLabel}
-            </Button>
+            <Typography variant="body2" color="text.secondary">
+              {subtitle}
+            </Typography>
+            <Typography variant="body2" fontWeight={600}>
+              {identifier}
+            </Typography>
           </Stack>
-        </Paper>
-      </Box>
+
+          {/* OTP Inputs */}
+          <Stack direction="row" spacing={1.5}>
+            {otp.map((value, index) => (
+              <TextField
+                key={index}
+                value={value}
+                inputRef={(el) => (inputsRef.current[index] = el)}
+                onChange={(e) => handleChange(e.target.value, index)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                onPaste={handlePaste}
+                inputProps={{
+                  maxLength: 1,
+                  inputMode: "numeric",
+                  style: {
+                    textAlign: "center",
+                    fontSize: isTabletUp ? 22 : 18,
+                    fontWeight: 600,
+                  },
+                }}
+                sx={{ width: isTabletUp ? 56 : 48 }}
+              />
+            ))}
+          </Stack>
+
+          {/* Error */}
+          {errorMessage && (
+            <Typography color="error" variant="body2">
+              {errorMessage}
+            </Typography>
+          )}
+
+          {/* CTA */}
+          <Button
+            fullWidth
+            variant="contained"
+            disabled={!isComplete || isLoading}
+            onClick={() => onSubmit?.({ otp: combinedOtp })}
+            sx={{
+              height: isTabletUp ? 56 : 52,
+              borderRadius: 3,
+              bgcolor: "text.primary",
+              "&:hover": { bgcolor: "text.primary" },
+            }}
+          >
+            {isLoading ? "Verifying..." : primaryActionLabel}
+          </Button>
+
+          <Typography
+            variant="body2"
+            color="primary.main"
+            sx={{ cursor: "pointer" }}
+          >
+            Resend Code
+          </Typography>
+        </Stack>
+      </Paper>
     </Box>
   );
 };

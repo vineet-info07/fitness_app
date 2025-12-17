@@ -1,26 +1,27 @@
-import type { SubmitHandler } from "react-hook-form";
-import type { AuthIdentifierFormValues } from "../utils/auth.validators";
+export type AuthIdentifierFormValues = {
+  identifier: string;
+  password: string;
+};
+
+export type AuthOtpFormValues = {
+  otp: string;
+};
 
 export type AuthIdentifierStepProps = {
   title?: string;
   subtitle?: string;
   primaryActionLabel?: string;
-  onSubmit: SubmitHandler<AuthIdentifierFormValues>;
+  isLoading?: boolean;
+  errorMessage?: string | null;
+  onSubmit: (data: AuthIdentifierFormValues) => void;
   onForgotPassword?: () => void;
   onSwitchAuthMode?: () => void;
-  // errorMessage?: string;
 };
-
-export interface AuthOtpStepProps {
-  title?: string;
-  subtitle?: string;
-  maskedIdentifier?: string;
-  primaryActionLabel?: string;
-
-  onSubmit?: () => void;
-  onBack?: () => void;
-  onResend?: () => void;
-}
+export type AuthOtpStepProps = {
+  isLoading?: boolean;
+  errorMessage?: string | null;
+  onSubmit: (data: AuthOtpFormValues) => void;
+};
 
 export interface AuthSuccessStepProps {
   title?: string;
@@ -29,12 +30,7 @@ export interface AuthSuccessStepProps {
   onContinue?: () => void;
 }
 
-export interface AuthErrorMessageProps {
-  title?: string;
+export type AuthErrorMessageProps = {
   message?: string;
-  primaryActionLabel?: string;
-  secondaryActionLabel?: string;
-  onPrimaryAction?: () => void;
-  onSecondaryAction?: () => void;
-  variant?: "inline" | "page";
-}
+  onRetry: () => void; // ✅ REQUIRED
+};

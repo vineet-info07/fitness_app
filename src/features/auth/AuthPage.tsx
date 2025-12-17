@@ -1,47 +1,50 @@
+// features/auth/AuthPage.tsx
 import AuthIdentifierStep from "./components/AuthIdentifierStep";
 import AuthOtpStep from "./components/AuthOtpStep";
 import AuthSuccessStep from "./components/AuthSuccessStep";
 import AuthErrorMessage from "./components/AuthErrorMessage";
 
-import { AuthStep } from "./types/auth.enums";
 import { useAuthFlow } from "./hooks/useAuthFlow";
+import { useLogin } from "./hooks/useLogin";
+import { useVerifyOtp } from "./hooks/useVerifyOtp";
+import { AuthStep } from "./types/auth.enums";
 
 const AuthPage = () => {
-  const { step, submitIdentifier, submitOtp, resetFlow, error } = useAuthFlow();
+  const flow = useAuthFlow();
+  const login = useLogin();
+  const otp = useVerifyOtp();
 
-  const handleIdentifierSubmit = (data: {
-    identifier: string;
-    password: string;
-  }) => {
-    submitIdentifier(data.identifier, data.password);
-  };
-
-  switch (step) {
-    case AuthStep.IDENTIFIER:
-      return <AuthIdentifierStep onSubmit={handleIdentifierSubmit} />;
-
-    case AuthStep.OTP:
-      return (
-        <AuthOtpStep onSubmit={() => submitOtp("123456")} onBack={resetFlow} />
-      );
-
-    case AuthStep.SUCCESS:
-      return (
-        <AuthSuccessStep onContinue={() => console.log("Go to dashboard")} />
-      );
-
-    case AuthStep.ERROR:
-      return (
-        <AuthErrorMessage
-          variant="page"
-          message={error ?? "Authentication failed"}
-          onPrimaryAction={resetFlow}
-        />
-      );
-
-    default:
-      return null;
+  if (flow.step === AuthStep.IDENTIFIER) {
+    return (
+      <AuthIdentifierStep
+        onSubmit={async ({ identifier }) => {
+          const success = await login.login(identifier);
+          if (success) flow.goToOtp(identifier);
+        }}
+        errorMessage={login.error}
+        isLoading={login.loading}
+      />
+    );
   }
+
+  if (flow.step === AuthStep.OTP) {
+    return (
+      <AuthOtpStep
+        onSubmit={async ({ otp: code }) => {
+          const verified = await otp.verifyOtp(code);
+          if (verified) flow.goToSuccess();
+        }}
+        errorMessage={otp.error}
+        isLoading={otp.loading}
+      />
+    );
+  }
+
+  if (flow.step === AuthStep.SUCCESS) {
+    return <AuthSuccessStep />;
+  }
+
+  return <AuthErrorMessage onRetry={flow.resetFlow} />;
 };
 
 export default AuthPage;
