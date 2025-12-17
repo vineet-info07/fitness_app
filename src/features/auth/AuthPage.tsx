@@ -1,79 +1,44 @@
-import { useState } from "react";
-
 import AuthIdentifierStep from "./components/AuthIdentifierStep";
 import AuthOtpStep from "./components/AuthOtpStep";
 import AuthSuccessStep from "./components/AuthSuccessStep";
 import AuthErrorMessage from "./components/AuthErrorMessage";
 
 import { AuthStep } from "./types/auth.enums";
+import { useAuthFlow } from "./hooks/useAuthFlow";
 
 const AuthPage = () => {
-  const [step, setStep] = useState<AuthStep>(AuthStep.IDENTIFIER);
+  const { step, submitIdentifier, submitOtp, resetFlow, error } = useAuthFlow();
 
-  /* ---------------- Step Handlers ---------------- */
+  switch (step) {
+    case AuthStep.IDENTIFIER:
+      return (
+        <AuthIdentifierStep
+          onSubmit={() => submitIdentifier("test@test.com", "password")}
+        />
+      );
 
-  const handleIdentifierSubmit = () => {
-    // Phase-1: mock success
-    setStep(AuthStep.OTP);
-  };
+    case AuthStep.OTP:
+      return (
+        <AuthOtpStep onSubmit={() => submitOtp("123456")} onBack={resetFlow} />
+      );
 
-  const handleOtpSubmit = () => {
-    // Phase-1: mock success
-    setStep(AuthStep.SUCCESS);
-  };
+    case AuthStep.SUCCESS:
+      return (
+        <AuthSuccessStep onContinue={() => console.log("Go to dashboard")} />
+      );
 
-  const handleError = () => {
-    setStep(AuthStep.ERROR);
-  };
+    case AuthStep.ERROR:
+      return (
+        <AuthErrorMessage
+          variant="page"
+          message={error ?? "Authentication failed"}
+          onPrimaryAction={resetFlow}
+        />
+      );
 
-  const handleRetry = () => {
-    setStep(AuthStep.IDENTIFIER);
-  };
-
-  /* ---------------- Renderer ---------------- */
-
-  const renderStep = () => {
-    switch (step) {
-      case AuthStep.IDENTIFIER:
-        return (
-          <AuthIdentifierStep
-            onSubmit={handleIdentifierSubmit}
-            onSwitchAuthMode={() => console.log("Switch auth mode")}
-            onForgotPassword={() => console.log("Forgot password")}
-          />
-        );
-
-      case AuthStep.OTP:
-        return (
-          <AuthOtpStep
-            onSubmit={handleOtpSubmit}
-            onBack={() => setStep(AuthStep.IDENTIFIER)}
-          />
-        );
-
-      case AuthStep.SUCCESS:
-        return (
-          <AuthSuccessStep
-            onContinue={() => console.log("Navigate to dashboard")}
-          />
-        );
-
-      case AuthStep.ERROR:
-        return (
-          <AuthErrorMessage
-            variant="page"
-            title="Authentication Failed"
-            message="Please check your credentials and try again."
-            onPrimaryAction={handleRetry}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  return renderStep();
+    default:
+      return null;
+  }
 };
 
 export default AuthPage;
