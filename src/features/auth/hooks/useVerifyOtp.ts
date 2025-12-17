@@ -1,31 +1,28 @@
+// features/auth/hooks/useVerifyOtp.ts
 import { useState } from "react";
+import { mockVerifyOtp } from "../services/auth.mock";
 
 export const useVerifyOtp = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const verifyOtp = async (otp: string) => {
-    setIsLoading(true);
-    setError(null);
-
-    return new Promise<boolean>((resolve) => {
-      setTimeout(() => {
-        setIsLoading(false);
-
-        // Mock OTP rule
-        if (otp !== "123456") {
-          setError("Invalid OTP. Please try again.");
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      }, 1000);
-    });
+    try {
+      setLoading(true);
+      setError(null);
+      await mockVerifyOtp(otp);
+      return true;
+    } catch (err: any) {
+      setError(err.message || "OTP verification failed");
+      return false;
+    } finally {
+      setLoading(false);
+    }
   };
 
   return {
     verifyOtp,
-    isLoading,
+    loading,
     error,
   };
 };

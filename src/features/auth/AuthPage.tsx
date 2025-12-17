@@ -9,13 +9,16 @@ import { useAuthFlow } from "./hooks/useAuthFlow";
 const AuthPage = () => {
   const { step, submitIdentifier, submitOtp, resetFlow, error } = useAuthFlow();
 
+  const handleIdentifierSubmit = (data: {
+    identifier: string;
+    password: string;
+  }) => {
+    submitIdentifier(data.identifier, data.password);
+  };
+
   switch (step) {
     case AuthStep.IDENTIFIER:
-      return (
-        <AuthIdentifierStep
-          onSubmit={() => submitIdentifier("test@test.com", "password")}
-        />
-      );
+      return <AuthIdentifierStep onSubmit={handleIdentifierSubmit} />;
 
     case AuthStep.OTP:
       return (

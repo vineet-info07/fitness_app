@@ -1,8 +1,11 @@
+import type { SubmitHandler } from "react-hook-form";
+import type { AuthIdentifierFormValues } from "../utils/auth.validators";
+
 export type AuthIdentifierStepProps = {
   title?: string;
   subtitle?: string;
   primaryActionLabel?: string;
-  onSubmit?: () => void;
+  onSubmit: SubmitHandler<AuthIdentifierFormValues>;
   onForgotPassword?: () => void;
   onSwitchAuthMode?: () => void;
   // errorMessage?: string;

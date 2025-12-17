@@ -1,48 +1,34 @@
 import { useState } from "react";
 import { AuthStep } from "../types/auth.enums";
-import { useLogin } from "./useLogin";
-import { useVerifyOtp } from "./useVerifyOtp";
 
 export const useAuthFlow = () => {
   const [step, setStep] = useState<AuthStep>(AuthStep.IDENTIFIER);
+  const [identifier, setIdentifier] = useState<string>("");
 
-  const loginApi = useLogin();
-  const otpApi = useVerifyOtp();
-
-  /* ---------------- Handlers ---------------- */
-
-  const submitIdentifier = async (identifier: string, password?: string) => {
-    const success = await loginApi.login(identifier, password);
-
-    if (success) {
-      setStep(AuthStep.OTP);
-    } else {
-      setStep(AuthStep.ERROR);
-    }
+  const goToOtp = (identifier: string) => {
+    setIdentifier(identifier);
+    setStep(AuthStep.OTP);
   };
 
-  const submitOtp = async (otp: string) => {
-    const success = await otpApi.verifyOtp(otp);
+  const goToSuccess = () => {
+    setStep(AuthStep.SUCCESS);
+  };
 
-    if (success) {
-      setStep(AuthStep.SUCCESS);
-    } else {
-      setStep(AuthStep.ERROR);
-    }
+  const goToError = () => {
+    setStep(AuthStep.ERROR);
   };
 
   const resetFlow = () => {
+    setIdentifier("");
     setStep(AuthStep.IDENTIFIER);
   };
 
   return {
     step,
-
-    submitIdentifier,
-    submitOtp,
+    identifier,
+    goToOtp,
+    goToSuccess,
+    goToError,
     resetFlow,
-
-    isLoading: loginApi.isLoading || otpApi.isLoading,
-    error: loginApi.error || otpApi.error,
   };
 };
