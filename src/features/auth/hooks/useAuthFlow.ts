@@ -1,34 +1,33 @@
 import { useState } from "react";
-import { AuthStep } from "../types/auth.enums";
+import type { AuthIdentifierFormValues } from "../utils/auth.validators";
 
-export const useAuthFlow = () => {
-  const [step, setStep] = useState<AuthStep>(AuthStep.IDENTIFIER);
-  const [identifier, setIdentifier] = useState<string>("");
+export type AuthStep = "IDENTIFIER" | "OTP" | "SUCCESS" | "ERROR";
 
-  const goToOtp = (identifier: string) => {
-    setIdentifier(identifier);
-    setStep(AuthStep.OTP);
+export function useAuthFlow() {
+  const [step, setStep] = useState<AuthStep>("IDENTIFIER");
+  const [identifierData, setIdentifierData] =
+    useState<AuthIdentifierFormValues | null>(null);
+
+  const startOtpFlow = (data: AuthIdentifierFormValues) => {
+    setIdentifierData(data);
+    setStep("OTP");
   };
 
-  const goToSuccess = () => {
-    setStep(AuthStep.SUCCESS);
-  };
+  const handleOtpSuccess = () => setStep("SUCCESS");
 
-  const goToError = () => {
-    setStep(AuthStep.ERROR);
-  };
+  const handleError = () => setStep("ERROR");
 
   const resetFlow = () => {
-    setIdentifier("");
-    setStep(AuthStep.IDENTIFIER);
+    setIdentifierData(null);
+    setStep("IDENTIFIER");
   };
 
   return {
     step,
-    identifier,
-    goToOtp,
-    goToSuccess,
-    goToError,
+    identifierData,
+    startOtpFlow,
+    handleOtpSuccess,
+    handleError,
     resetFlow,
   };
-};
+}

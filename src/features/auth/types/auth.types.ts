@@ -34,3 +34,14 @@ export type AuthErrorMessageProps = {
   message?: string;
   onRetry: () => void; // ✅ REQUIRED
 };
+
+export interface AuthState {
+  isAuthenticated: boolean;
+  isOtpVerified: boolean;
+  token: string | null;
+  user: {
+    id: string;
+    email: string;
+  } | null;
+  status: "idle" | "loading" | "error";
+}

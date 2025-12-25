@@ -1,19 +1,18 @@
-export const mockLogin = async (identifier: string) => {
-  await new Promise((r) => setTimeout(r, 1200));
+import type { AuthIdentifierFormValues } from "../utils/auth.validators";
 
-  if (!identifier.includes("@")) {
-    throw new Error("Invalid email address");
-  }
+export async function mockLogin(_data: AuthIdentifierFormValues) {
+  await delay(800);
+  return true;
+}
 
-  return { success: true };
-};
-
-export const mockVerifyOtp = async (otp: string) => {
-  await new Promise((r) => setTimeout(r, 1200));
+export async function mockVerifyOtp(otp: string) {
+  await delay(800);
 
   if (otp !== "123456") {
-    throw new Error("Invalid OTP");
+    throw new Error("Incorrect OTP");
   }
 
-  return { verified: true };
-};
+  return { token: "mock-token" };
+}
+
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

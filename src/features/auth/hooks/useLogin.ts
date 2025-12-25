@@ -1,28 +1,25 @@
-// features/auth/hooks/useLogin.ts
 import { useState } from "react";
 import { mockLogin } from "../services/auth.mock";
+import type { AuthIdentifierFormValues } from "../utils/auth.validators";
 
-export const useLogin = () => {
+export function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const login = async (identifier: string) => {
+  const login = async (data: AuthIdentifierFormValues) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      setError(null);
-      await mockLogin(identifier);
+      await mockLogin(data);
       return true;
-    } catch (err: any) {
-      setError(err.message || "Login failed");
+    } catch (e: any) {
+      setError(e.message ?? "Login failed");
       return false;
     } finally {
       setLoading(false);
     }
   };
 
-  return {
-    login,
-    loading,
-    error,
-  };
-};
+  return { login, loading, error };
+}
